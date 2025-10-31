@@ -51,11 +51,8 @@ cameraTrigger.onclick = function () {
 };
 
 trocarCam.onclick = function () {
-  cameraSensor.width = cameraView.videoWidth;
-  cameraSensor.height = cameraView.videoHeight;
-  cameraSensor.getContext("2d").drawImage(cameraView, 0, 0);
-  cameraOutput.src = cameraSensor.toDataURL("image/webp");
-  cameraOutput.classList.add("taken");
+  toggleCamera();
+  cameraStart();
 }
 
 // Carrega imagem de câmera quando a janela carregar
