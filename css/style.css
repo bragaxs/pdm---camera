@@ -22,7 +22,7 @@ html, body {
   filter: FlipH;
 }
 
-#camera--trigger {
+#camera--trigger, #trocar--cam {
   width: 200px;
   background-color: black;
   color: white;
@@ -35,6 +35,10 @@ html, body {
   position: fixed;
   bottom: 30px;
   left: calc(50% - 100px);
+}
+
+#trocar--cam {
+  bottom: 80px;
 }
 
 .taken {
@@ -46,20 +50,4 @@ html, body {
   top: 20px;
   right: 20px;
   z-index: 2;
-}
-
-
-#trocar--cam {
-  width: 200px;
-  background-color: black;
-  color: white;
-  font-size: 16px;
-  border-radius: 30px;
-  border: none;
-  padding: 15px 20px;
-  text-align: center;
-  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
-  position: fixed;
-  bottom: 30px;
-  left: calc(50% - 100px);
 }
