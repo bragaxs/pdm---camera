@@ -15,9 +15,9 @@ if ('serviceWorker' in navigator) {
 var constraints = { video: { facingMode: "user" }, audio: false };
 function toggleCamera() {
   if (constraints.video.facingMode === "user") {
-    constraints.video.facingMode = "environment";
+    constraints.assign({ video: { facingMode: "environment" }, audio: false });
   } else {
-    constraints.video.facingMode = "user";
+    constraints.assign({ video: { facingMode: "user" }, audio: false });
   }
 }
 
