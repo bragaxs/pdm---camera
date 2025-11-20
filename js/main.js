@@ -13,15 +13,15 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// configurando as constraints do video stream (APENAS 1 VEZ)
-var constraints = { video: { facingMode: { exact: "user" } }, audio: false };
+// configurando as constraints do video stream
+var constraints = { video: { facingMode: "user" }, audio: false };
 
-// função de trocar câmera (APENAS 1 VEZ)
+// Função para trocar entre câmera frontal e traseira
 function toggleCamera() {
-  if (constraints.video.facingMode.exact === "user") {
-    constraints = { video: { facingMode: { exact: "environment" } }, audio: false };
+  if (constraints.video.facingMode === "user") {
+    constraints = { video: { facingMode: "environment" }, audio: false };
   } else {
-    constraints = { video: { facingMode: { exact: "user" } }, audio: false };
+    constraints = { video: { facingMode: "user" }, audio: false };
   }
 }
 
@@ -32,7 +32,7 @@ const cameraView = document.querySelector("#camera--view"),
   cameraTrigger = document.querySelector("#camera--trigger"),
   trocarCam = document.querySelector("#trocar--cam");
 
-// Estabelecendo o acesso à câmera e inicializando a visualização
+// Função para iniciar a câmera
 function cameraStart() {
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -59,5 +59,5 @@ trocarCam.onclick = function () {
   cameraStart();
 };
 
-// Carrega imagem da câmera quando a janela carregar
+// Carrega a câmera quando a página abrir
 window.addEventListener("load", cameraStart, false);
