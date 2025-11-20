@@ -1,25 +1,21 @@
 // registrando o service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", async () => {
     try {
-      let reg;
-      reg = await navigator.serviceWorker.register('/sw.js', { type: "module" });
-      console.log('Service worker registrado! 😎', reg);
+      let reg = await navigator.serviceWorker.register("/sw.js", {
+        type: "module",
+      });
+      console.log("Service worker registrado! 😎", reg);
     } catch (err) {
-      console.log('😢 Service worker registro falhou: ', err);
+      console.log("😢 Service worker registro falhou: ", err);
     }
   });
 }
 
-// configurando as constraints do video stream
-var constraints = { video: { facingMode: "user" }, audio: false };
-function toggleCamera() {
-  if (constraints.video.facingMode === "user") {
-    constraints.assign({ video: { facingMode: "environment" }, audio: false });
-  } else {
-    constraints.assign({ video: { facingMode: "user" }, audio: false });
-  }
-}
+// ----- CONFIGURAÇÃO DA CÂMERA -----
+
+let currentFacing = "user"; // começa com a câmera frontal
+let stream = null;
 
 // capturando os elementos em tela
 const cameraView = document.querySelector("#camera--view"),
@@ -28,20 +24,32 @@ const cameraView = document.querySelector("#camera--view"),
   cameraTrigger = document.querySelector("#camera--trigger"),
   trocarCam = document.querySelector("#trocar--cam");
 
-// Estabelecendo o acesso à câmera e inicializando a visualização
-function cameraStart() {
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(function (stream) {
-      let track = stream.getTracks()[0];
-      cameraView.srcObject = stream;
-    })
-    .catch(function (error) {
-      console.error("Ocorreu um erro.", error);
+// inicia a câmera
+async function cameraStart() {
+  // se já existe um stream, parar
+  if (stream) {
+    stream.getTracks().forEach((t) => t.stop());
+  }
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: currentFacing },
+      audio: false,
     });
+
+    cameraView.srcObject = stream;
+  } catch (error) {
+    console.error("Ocorreu um erro ao iniciar a câmera:", error);
+  }
 }
 
-// Função para tirar foto
+// alternar câmera
+async function toggleCamera() {
+  currentFacing = currentFacing === "user" ? "environment" : "user";
+  await cameraStart();
+}
+
+// tirar foto
 cameraTrigger.onclick = function () {
   cameraSensor.width = cameraView.videoWidth;
   cameraSensor.height = cameraView.videoHeight;
@@ -50,11 +58,10 @@ cameraTrigger.onclick = function () {
   cameraOutput.classList.add("taken");
 };
 
-
-toggleCamera.onclick = function () {
+// botão de trocar câmera
+trocarCam.onclick = function () {
   toggleCamera();
-  cameraStart();
-}
+};
 
-// Carrega imagem de câmera quando a janela carregar
+// inicia tudo ao carregar
 window.addEventListener("load", cameraStart, false);
