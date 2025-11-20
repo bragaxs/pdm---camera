@@ -33,17 +33,16 @@ const cameraView = document.querySelector("#camera--view"),
   trocarCam = document.querySelector("#trocar--cam");
 
 // Estabelecendo o acesso à câmera e inicializando a visualização
-function cameraStart() {
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(function (stream) {
-      let track = stream.getTracks()[0];
-      cameraView.srcObject = stream;
-    })
-    .catch(function (error) {
-      console.error("Ocorreu um erro.", error);
-    });
+var constraints = { video: { facingMode: { exact: "user" } }, audio: false };
+
+function toggleCamera() {
+  if (constraints.video.facingMode.exact === "user") {
+    constraints = { video: { facingMode: { exact: "environment" } }, audio: false };
+  } else {
+    constraints = { video: { facingMode: { exact: "user" } }, audio: false };
+  }
 }
+
 
 // Função para tirar foto
 cameraTrigger.onclick = function () {
