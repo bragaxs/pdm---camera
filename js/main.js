@@ -2,7 +2,8 @@
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      let reg = await navigator.serviceWorker.register("/sw.js", {
+      let reg;
+      reg = await navigator.serviceWorker.register("/sw.js", {
         type: "module",
       });
       console.log("Service worker registrado! 😎", reg);
@@ -12,10 +13,17 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// ----- CONFIGURAÇÃO DA CÂMERA -----
+// configurando as constraints do video stream
+var constraints = { video: { facingMode: "user" }, audio: false };
 
-let currentFacing = "user"; // começa com a câmera frontal
-let stream = null;
+function toggleCamera() {
+  // CORREÇÃO: remove assign() (não existe) e troca o objeto inteiro
+  if (constraints.video.facingMode === "user") {
+    constraints = { video: { facingMode: "environment" }, audio: false };
+  } else {
+    constraints = { video: { facingMode: "user" }, audio: false };
+  }
+}
 
 // capturando os elementos em tela
 const cameraView = document.querySelector("#camera--view"),
@@ -24,32 +32,20 @@ const cameraView = document.querySelector("#camera--view"),
   cameraTrigger = document.querySelector("#camera--trigger"),
   trocarCam = document.querySelector("#trocar--cam");
 
-// inicia a câmera
-async function cameraStart() {
-  // se já existe um stream, parar
-  if (stream) {
-    stream.getTracks().forEach((t) => t.stop());
-  }
-
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: currentFacing },
-      audio: false,
+// Estabelecendo o acesso à câmera e inicializando a visualização
+function cameraStart() {
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(function (stream) {
+      let track = stream.getTracks()[0];
+      cameraView.srcObject = stream;
+    })
+    .catch(function (error) {
+      console.error("Ocorreu um erro.", error);
     });
-
-    cameraView.srcObject = stream;
-  } catch (error) {
-    console.error("Ocorreu um erro ao iniciar a câmera:", error);
-  }
 }
 
-// alternar câmera
-async function toggleCamera() {
-  currentFacing = currentFacing === "user" ? "environment" : "user";
-  await cameraStart();
-}
-
-// tirar foto
+// Função para tirar foto
 cameraTrigger.onclick = function () {
   cameraSensor.width = cameraView.videoWidth;
   cameraSensor.height = cameraView.videoHeight;
@@ -58,10 +54,11 @@ cameraTrigger.onclick = function () {
   cameraOutput.classList.add("taken");
 };
 
-// botão de trocar câmera
+// Botão para trocar a câmera
 trocarCam.onclick = function () {
   toggleCamera();
+  cameraStart(); // reinicia com a nova câmera
 };
 
-// inicia tudo ao carregar
+// Carrega imagem da câmera quando a janela carregar
 window.addEventListener("load", cameraStart, false);
