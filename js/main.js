@@ -50,7 +50,8 @@ cameraTrigger.onclick = function () {
   cameraOutput.classList.add("taken");
 };
 
-trocarCam.onclick = function () {
+
+toggleCamera.onclick = function () {
   toggleCamera();
   cameraStart();
 }
