@@ -13,15 +13,15 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// configurando as constraints do video stream
-var constraints = { video: { facingMode: "user" }, audio: false };
+// configurando as constraints do video stream (APENAS 1 VEZ)
+var constraints = { video: { facingMode: { exact: "user" } }, audio: false };
 
+// função de trocar câmera (APENAS 1 VEZ)
 function toggleCamera() {
-  // CORREÇÃO: remove assign() (não existe) e troca o objeto inteiro
-  if (constraints.video.facingMode === "user") {
-    constraints = { video: { facingMode: "environment" }, audio: false };
+  if (constraints.video.facingMode.exact === "user") {
+    constraints = { video: { facingMode: { exact: "environment" } }, audio: false };
   } else {
-    constraints = { video: { facingMode: "user" }, audio: false };
+    constraints = { video: { facingMode: { exact: "user" } }, audio: false };
   }
 }
 
@@ -33,16 +33,16 @@ const cameraView = document.querySelector("#camera--view"),
   trocarCam = document.querySelector("#trocar--cam");
 
 // Estabelecendo o acesso à câmera e inicializando a visualização
-var constraints = { video: { facingMode: { exact: "user" } }, audio: false };
-
-function toggleCamera() {
-  if (constraints.video.facingMode.exact === "user") {
-    constraints = { video: { facingMode: { exact: "environment" } }, audio: false };
-  } else {
-    constraints = { video: { facingMode: { exact: "user" } }, audio: false };
-  }
+function cameraStart() {
+  navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(function (stream) {
+      cameraView.srcObject = stream;
+    })
+    .catch(function (error) {
+      console.error("Ocorreu um erro.", error);
+    });
 }
-
 
 // Função para tirar foto
 cameraTrigger.onclick = function () {
@@ -56,7 +56,7 @@ cameraTrigger.onclick = function () {
 // Botão para trocar a câmera
 trocarCam.onclick = function () {
   toggleCamera();
-  cameraStart(); // reinicia com a nova câmera
+  cameraStart();
 };
 
 // Carrega imagem da câmera quando a janela carregar
