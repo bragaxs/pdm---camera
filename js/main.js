@@ -1,9 +1,10 @@
-// registrando o service worker
+// ----------------------------------------------------
+// REGISTRANDO SERVICE WORKER
+// ----------------------------------------------------
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      let reg;
-      reg = await navigator.serviceWorker.register("/sw.js", {
+      let reg = await navigator.serviceWorker.register("/sw.js", {
         type: "module",
       });
       console.log("Service worker registrado! 😎", reg);
@@ -13,26 +14,30 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-// configurando as constraints do video stream
-var constraints = { video: { facingMode: "user" }, audio: false };
+// ----------------------------------------------------
+// CONFIGURAÇÕES DA CÂMERA
+// ----------------------------------------------------
+let constraints = { video: { facingMode: "user" }, audio: false };
 
-// Função para trocar entre câmera frontal e traseira
+// Trocar câmera
 function toggleCamera() {
-  if (constraints.video.facingMode === "user") {
-    constraints = { video: { facingMode: "environment" }, audio: false };
-  } else {
-    constraints = { video: { facingMode: "user" }, audio: false };
-  }
+  constraints.video.facingMode =
+    constraints.video.facingMode === "user"
+      ? "environment"
+      : "user";
 }
 
-// capturando os elementos em tela
+// Elementos
 const cameraView = document.querySelector("#camera--view"),
   cameraOutput = document.querySelector("#camera--output"),
   cameraSensor = document.querySelector("#camera--sensor"),
   cameraTrigger = document.querySelector("#camera--trigger"),
-  trocarCam = document.querySelector("#trocar--cam");
+  trocarCam = document.querySelector("#trocar--cam"),
+  galeria = document.querySelector("#galeria");
 
-// Função para iniciar a câmera
+// ----------------------------------------------------
+// INICIAR CÂMERA
+// ----------------------------------------------------
 function cameraStart() {
   navigator.mediaDevices
     .getUserMedia(constraints)
@@ -44,20 +49,44 @@ function cameraStart() {
     });
 }
 
-// Função para tirar foto
-cameraTrigger.onclick = function () {
+// ----------------------------------------------------
+// TIRAR FOTO
+// ----------------------------------------------------
+cameraTrigger.onclick = async function () {
   cameraSensor.width = cameraView.videoWidth;
   cameraSensor.height = cameraView.videoHeight;
   cameraSensor.getContext("2d").drawImage(cameraView, 0, 0);
   cameraOutput.src = cameraSensor.toDataURL("image/webp");
-  cameraOutput.classList.add("taken");
+
+  await salvarFoto(cameraOutput.src);
+  carregarGaleria();
 };
 
-// Botão para trocar a câmera
+// ----------------------------------------------------
+// BOTÃO TROCAR CÂMERA
+// ----------------------------------------------------
 trocarCam.onclick = function () {
   toggleCamera();
   cameraStart();
 };
 
-// Carrega a câmera quando a página abrir
-window.addEventListener("load", cameraStart, false);
+// ----------------------------------------------------
+// GALERIA (IndexedDB)
+// ----------------------------------------------------
+async function carregarGaleria() {
+  const fotos = await listarFotos();
+  galeria.innerHTML = "";
+
+  fotos.forEach(f => {
+    const img = document.createElement("img");
+    img.src = f.data;
+    img.className = "foto";
+    galeria.appendChild(img);
+  });
+}
+
+// Iniciar
+window.addEventListener("load", () => {
+  cameraStart();
+  carregarGaleria();
+});

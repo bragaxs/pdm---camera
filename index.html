@@ -1,36 +1,30 @@
-<!doctype html>
-<html lang="pt">
-
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PWA • Camera</title>
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="/img/icon-256_ios.png">
-  <link rel="icon" href="/img/camera_256.png" sizes="256x256">
-  <meta name="theme-color" content="white">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diário Fotográfico Offline</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  <!-- Camera -->
-  <main id="camera">
-    <!-- Camera sensor (lente) -->
-    <canvas id="camera--sensor"></canvas>
-    
-    <!-- Camera view (visualização) -->
+
+  <h1>Diário Fotográfico Offline</h1>
+
+  <div id="camera-area">
     <video id="camera--view" autoplay playsinline></video>
 
-    <!-- Camera output -->
-    <img src="//:0" alt="" id="camera--output">
+    <button id="camera--trigger">Tirar Foto</button>
+    <button id="trocar--cam">Trocar Câmera</button>
+  </div>
 
-    <!-- Camera botão de tirar foto -->
-    <button id="camera--trigger">tirar foto</button>
-    <button id="trocar--cam">trocar câmera</button>
-  </main>
+  <canvas id="camera--sensor" style="display:none;"></canvas>
 
-  <script src="js/main.js" type="module"></script>
+  <img id="camera--output" class="taken" />
+
+  <h2>Galeria</h2>
+  <div id="galeria"></div>
+
+  <script src="db.js"></script>
+  <script src="main.js"></script>
 </body>
-
 </html>
